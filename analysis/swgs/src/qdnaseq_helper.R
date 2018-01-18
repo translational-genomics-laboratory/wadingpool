@@ -93,6 +93,7 @@ plotResults <- function(pdir, type, ...){
       \t'smooth' = Generate mappability/GC corrected raw plots
       \t'segmented' = Generate the CBS segmented plots
       \t'called' = Generate the 6mer EM-deconstructed CN Calls")
+  type <- 'called'
   
   if(type == 'raw' || type == 'all'){
     cat("Plotting Raw and QC plots...")
@@ -107,18 +108,21 @@ plotResults <- function(pdir, type, ...){
   }
   
   if(type == 'smooth' || type == 'all'){
+    cat("Plotting Mappability-GC smoothed copy-ratio plots...")
     pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.smooth.pdf"))
     plot(copyNumbersSmooth, ylim=c(0,15))
     dev.off()
   }
   
   if(type == 'segmented' || type == 'all'){
+    cat("Plotting CBS segmented plots...")
     pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.segmented.pdf"))
     plot(copyNumbersSegmented)
     dev.off()
   }
   
   if(type == 'called' || type == 'all'){
+    cat("Plotting Copy-states plots...")
     pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.called.pdf"))
     plot(copyNumbersCalled)
     dev.off()
@@ -130,7 +134,7 @@ plotResults <- function(pdir, type, ...){
     dev.off()
   }
   
-  if(type == 'all'){
+  if(type == 'segmented' ||type == 'all'){
     segdat <- formatSeg(copyNumbersSegmented)
     write.table(do.call("rbind", segdat),
                 file=file.path(pdir, "qdnaseq", "output", "swgs_segments.seg"),
@@ -149,5 +153,5 @@ printUsage <- function(){
        \t args[2] = Name of the out-directory (i.e. 'CHX_batch1')
        \t args[3] = Mode to run in: 'stagger' or 'bin'
        \t args[4] = Bin size to use:  automatically defaults to 1000kb if using 'stagger' mode
-       \t args[5] = [OPTIONAL]: Regex to select for specific BAM files")
+       \t args[5] = [OPTIONAL]: Regex to select for specific BAM files\n\n")
 }
