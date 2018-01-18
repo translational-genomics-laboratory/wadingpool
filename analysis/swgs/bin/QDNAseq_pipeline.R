@@ -2,7 +2,7 @@
 # source("http://bioconductor.org/biocLite.R")
 # biocLite("QDNAseq")
 # 
-#  Rscript QDNAseq_pipeline.R /path/to/parent_directory outdir_id mode bin_size BAM_004_076 
+#  Rscript QDNAseq_pipeline.R /path/to/parent_directory outdir_id run_mode bin_size BAM_004_076 
 #     args[1] = Absolute path to the parent directory;  Assumes nested directories are 'qdnaseq' and 'input'
 #     args[2] = Name of the out-directory (i.e. 'CHX_batch1')
 #     args[3] = Mode to run in: 'stagger' or 'bin'
@@ -13,10 +13,10 @@ library(QDNAseq)
 library(GenomicRanges)
 library(Biobase)
 library(DNAcopy)
-source("~/git/shallowwgscn/analysis/swgs/src/misc.R")
-source("~/git/shallowwgscn/analysis/swgs/src/physicalCov.R")
-source("~/git/shallowwgscn/analysis/swgs/src/reduceToSegFile.R")
-source("~/git/shallowwgscn/analysis/swgs/src/qdnaseq_helper")
+source("~/git/wadingpool/analysis/swgs/src/misc.R")
+source("~/git/wadingpool/analysis/swgs/src/physicalCov.R")
+source("~/git/wadingpool/analysis/swgs/src/reduceToSegFile.R")
+source("~/git/wadingpool/analysis/swgs/src/qdnaseq_helper")
 
 #### Initial setup
 ########################################
