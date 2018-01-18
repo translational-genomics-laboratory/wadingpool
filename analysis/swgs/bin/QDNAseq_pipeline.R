@@ -16,7 +16,7 @@ library(DNAcopy)
 source("~/git/wadingpool/analysis/swgs/src/misc.R")
 source("~/git/wadingpool/analysis/swgs/src/physicalCov.R")
 source("~/git/wadingpool/analysis/swgs/src/reduceToSegFile.R")
-source("~/git/wadingpool/analysis/swgs/src/qdnaseq_helper")
+source("~/git/wadingpool/analysis/swgs/src/qdnaseq_helper.R")
 
 #### Initial setup
 ########################################
