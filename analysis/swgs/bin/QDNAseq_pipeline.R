@@ -36,7 +36,7 @@ if (length(args)==0) {
   pdir <- args[1]
   outdir <- args[2]
   run.mode <- args[3]
-  if(run.mode == 'stagger') bin.size <- 1000 else bin.size <- args[4]
+  if(run.mode == 'stagger') bin.size <- 1000 else bin.size <- as.integer(as.character(args[4]))
   if(length(args)==5L) bam.grep <- args[5] else bam.grep <- NULL
 }
 offset.dir <- '~/git/wadingpool/analysis/swgs/ref/stagger'
