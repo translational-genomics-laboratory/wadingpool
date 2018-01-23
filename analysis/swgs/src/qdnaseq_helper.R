@@ -30,9 +30,15 @@ getDefaultCn <- function(bins, bam.files, bam.dir, run.em=TRUE){
     # Applies the 6-mer gaussian deconvolution to assign copy-state used in CGHcall
     copyNumbersCalled <- callBins(copyNumbersSegmented)  
   } else {
-    copyNumbersCalled <- copyNumbersSegmented
+    copyNumbersCalled <- NULL
   }
-  copyNumbersCalled
+  list("copyNumbersCalled" = copyNumbersCalled,
+       "copyNumbersSegmented" = copyNumbersSegmented,
+       "copyNumbersSmooth" = copyNumbersSmooth,
+       "copyNumbersNormalized" = copyNumbersNormalized,
+       "copyNumbers" = copyNumbers,
+       "readCountsFiltered" = readCountsFiltered,
+       "readCounts"=readCounts)
 }
 
 # For a set of bins that overlap, intersect get the mapping indices

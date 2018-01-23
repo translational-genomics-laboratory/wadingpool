@@ -57,17 +57,18 @@ if(bin.size == 1000){
 }
 
 # Set up the default copy-number estimates 
-copyNumbersSegmented <- getDefaultCn(bins, bam.files, bam.dir, run.em=TRUE)
+cnList <- getDefaultCn(bins, bam.files, bam.dir, run.em=TRUE)
 
 if(run.mode == 'stagger'){
+  copyNumbersSegmented <- cnList[['copyNumbersSegmented']]
   # Set up a reference 5kb copy-number estimates to refine
   bins.5kb <- getBinAnnotations(binSize=5)  #per Kb5
-  bins.5kb <- getDefaultCn(bins.5kb, bam.files, bam.dir, run.em=FALSE)
+  bins.5kb <- getDefaultCn(bins.5kb, bam.files, bam.dir, run.em=FALSE)[['copyNumbersSegmented']]
   
   # For each staggered bin, get the copy-number estimates
   window.copyNumbersSegmented <- lapply(list.files(offset.dir), function(binx){
     load(file.path(offset.dir, binx))
-    getDefaultCn(bins, bam.files, bam.dir, run.em=FALSE)
+    getDefaultCn(bins, bam.files, bam.dir, run.em=FALSE)[['copyNumbersSegmented']]
   })
   names(window.copyNumbersSegmented) <- list.files(offset.dir)
   
@@ -95,6 +96,14 @@ if(run.mode == 'stagger'){
     summ.list[[each.id]] <- summ.cn
   }
   
+} else {
+  copyNumbersCalled <- cnList[["copyNumbersCalled"]]
+  copyNumbersSegmented <- cnList[["copyNumbersSegmented"]]
+  copyNumbersSmooth <- cnList[["copyNumbersSmooth"]]
+  copyNumbersNormalized <- cnList[["copyNumbersNormalized"]]
+  copyNumbers <- cnList[["copyNumbers"]]
+  readCountsFiltered <- cnList[["readCountsFiltered"]]
+  readCounts <- cnList[["readCounts"]]
 }
 
 if(devel){
@@ -138,6 +147,9 @@ if(devel){
 #### QDNAseq Plotting (temporary until heterozygostiy is included)
 ########################################
 dir.create(file.path(pdir, "qdnaseq", "output", outdir), recursive = TRUE)
+cat("Saving image...\n")
+save.image(file.path(pdir, "qdnaseq", "output", outdir, "CHXbatch3.Rdata"))
+cat("Plotting...\n")
 plotResults(pdir, type="all")   #raw, smooth, segmented, called
 
 
