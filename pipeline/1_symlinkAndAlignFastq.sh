@@ -23,11 +23,19 @@ for i in $(cat $FASTQDIRS); do
 done
 
 if($GENERATEIDS); then
-  echo "${bold}WadingPool:${normal} A new id_list.txt will be generated; this is only advisable if this is your first time running WadingPool on this dataset";
-  ls -1 fastq_symlinks | sed "s/_L0.*//" | sort | uniq > ${IDLIST}
+  echo "${bold}WadingPool:${normal} A new id_list.txt will be generated based on the fastq's located in your fastq_dirs.txt directories";
+  if [ -f ${IDLIST} ]; then
+    mv ${IDLIST} ${IDLIST}.tmp
+    echo "${bold}WadingPool:${normal} An existing id_list.txt has been found and been renamed as id_list.txt.tmp to avoid being overwritten, please rename appropriately.";
+  fi
+  echo "" > ${IDLIST}
+  for i in $(cat $FASTQDIRS); do
+    ls -1 $i | grep "fastq.gz" | sed "s/_L0.*//" | sort | uniq >> ${IDLIST}
+  done
 fi
 
 cd sh_scripts/bwa
+rm id_list.txt generateScripts.sh
 ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/alignment/bwa/generateScripts.sh .
 echo "${bold}WadingPool:${normal} Aligning fastq files...";

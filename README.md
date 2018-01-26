@@ -8,15 +8,19 @@ WadingPool is a tool designed by the Pugh Lab (University Healthy Network, Toron
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 Setting up the environment is best saved as a shell file labelled "0_setupEnvironment.sh", a sample file has been provided in the pipeline directory:
 ```
-git='~/git/shallowWgsCnv'
-PDIR='/mnt/work1/users/pughlab/projects/test_dir/swgs'
-FASTQDIRS=${PDIR}'/fastq_dirs.txt'
-IDLIST=${PDIR}'/id_list.txt'    # Generated in the "1_runSymlinkAlignFastq.sh" script
+cat << EOF > 0_setupEnvironment.sh
+
+GIT="/path/to/git/wadingpool"
+PDIR='/path/to/working_directory'   # Directory you created for analysis
+FASTQDIRS=${PDIR}'/fastq_dirs.txt'  # Pre-existing file containing absolute paths to directory harboring all raw fastq.gz files
+IDLIST=${PDIR}'/id_list.txt'        # Generated in the "1_runSymlinkAlignFastq.sh" script
 GENERATEIDS=true
-LIBID='171120_NB501085_0175_AHNJTFAFXX_Milosevic_Rene-Pugh'
+LIBID='180124_NB501085_0191_AH373KBGX5_Project_1'    # Unique library ID
 REFERENCEFILES='/mnt/work1/users/pughlab/references/igenome/coclean_reference_files.sh'
 DBSNPDIR='/mnt/work1/users/pughlab/references/dbsnp/dbsnp_b146_GRCh37p13/common/bed'
 DBSNPID='common_all_20151104.bed'
+
+EOF
 ```
 
 To facilitate the pre-processing steps, there are several helper bash-scripts that set-up the directory structure and execute the relevant commands.  Each helper script is aptly named to be descriptive of its function; more information of each script can be found as well.  Additionally, 
@@ -25,31 +29,32 @@ To facilitate the pre-processing steps, there are several helper bash-scripts th
 source 0_setupEnvironment.sh
 
 # Processes the fastq > bam alignment;  Any pipeline can replace these parts, as long as the output is a chromosome-subsetted bam file
-sh 1_symlinkAndAlignFastq.sh
-sh 2_cocleanAllBams.sh
-sh 2b_symlinksCocleanedBams.sh
-sh 3_subsetByChromosomes.sh
+sh ${GIT}/pipeline/1_symlinkAndAlignFastq.sh
+sh ${GIT}/pipeline/2_cocleanAllBams.sh
+sh ${GIT}/pipeline/2b_symlinksCocleanedBams.sh
+sh ${GIT}/pipeline/3_subsetByChromosomes.sh
 
 # Runs all the QC steps to calculate coverage and general metrics
-sh 4_getSwgsMetrics.sh
-sh 4b_summarizeSwgsMetrics.sh
+sh ${GIT}/pipeline/4_getSwgsMetrics.sh
+sh ${GIT}/pipeline/4b_summarizeSwgsMetrics.sh
 
 # Runs all the telomere-quantifying steps using TelomereCat
-sh 5_runTelomerecat.sh
-sh 5b_getTelomereLength.sh
+sh ${GIT}/pipeline/5_runTelomerecat.sh
+sh ${GIT}/pipeline/5b_getTelomereLength.sh
 
 # Runs all the variant calling steps, plus filtering for heterozygous or covered variants
-sh 6_variantCalling.sh
-sh 6b_selectHetVariants.sh
-sh 6c_mergeAllVcf.sh
+sh ${GIT}/pipeline/6_variantCalling.sh
+sh ${GIT}/pipeline/6b_selectHetVariants.sh
+sh ${GIT}/pipeline/6c_mergeAllVcf.sh
 
 # Runs all the variant calling steps, plus filtering for heterozygous or covered variants
-sh 6_variantCalling.sh
-sh 6b_selectHetVariants.sh
-sh 6c_mergeAllVcf.sh
+sh ${GIT}/pipeline/6_variantCalling.sh
+sh ${GIT}/pipeline/6b_selectHetVariants.sh
+sh ${GIT}/pipeline/6c_mergeAllVcf.sh
 
-# Runs QDNAseq copy number calling on the bam files
-sh 7_copyNumberCalling.sh
+# Runs QDNAseq and ichorCNA copy number calling on the bam files
+sh ${GIT}/pipeline/7a_copyNumberCalling_QDNAseq.sh
+sh ${GIT}/pipeline/7b_copyNumberCalling_ichorCNA.sh
 
 ```
 
