@@ -99,65 +99,73 @@ plotResults <- function(pdir, type, ...){
       \t'smooth' = Generate mappability/GC corrected raw plots
       \t'segmented' = Generate the CBS segmented plots
       \t'called' = Generate the 6mer EM-deconstructed CN Calls")
-  type <- 'called'
-  
+
   if(type == 'raw' || type == 'all'){
     cat("Plotting Raw and QC plots...")
-    pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.RawAndQC.pdf"))
+    pdf(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.RawAndQC.pdf"))
     isobarPlot(readCountsFiltered, what="fit")
     noisePlot(readCountsFiltered)
     plot(readCounts, logTransform=FALSE, ylim=c(quantile(readCounts@assayData$counts, 0.01),
                                                 quantile(readCounts@assayData$counts, 0.99)))
-    highlightFilters(readCounts, logTransform=FALSE,
-                     residual=TRUE, blacklist=TRUE)
+    try(expr=highlightFilters(readCounts, logTransform=FALSE,
+                              residual=TRUE, blacklist=TRUE), 
+        silent = TRUE)
     dev.off()
   }
   
   if(type == 'smooth' || type == 'all'){
     cat("Plotting Mappability-GC smoothed copy-ratio plots...")
-    pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.smooth.pdf"))
+    pdf(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.smooth.pdf"))
     plot(copyNumbersSmooth, ylim=c(0,15))
     dev.off()
   }
   
   if(type == 'segmented' || type == 'all'){
     cat("Plotting CBS segmented plots...")
-    pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.segmented.pdf"))
+    pdf(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.segmented.pdf"))
     plot(copyNumbersSegmented)
     dev.off()
   }
   
   if(type == 'called' || type == 'all'){
     cat("Plotting Copy-states plots...")
-    pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.called.pdf"))
+    pdf(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.called.pdf"))
     plot(copyNumbersCalled)
     dev.off()
   }
   
-  if(devel){
-    pdf(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.ascn.pdf"))
+  if(opt$devel){
+    pdf(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.ascn.pdf"))
     apply(copyNumbersASCN, 2, function(x) plot(x, ylim=c(0,6), pch=15))
     dev.off()
   }
   
   if(type == 'segmented' ||type == 'all'){
-    segdat <- formatSeg(copyNumbersSegmented)
+    if(type == 'segmented'){
+      segdat <- formatSeg(copyNumbersSegmented)
+    } else {
+      segdat <- formatSeg(copyNumbersCalled, method='calls')
+      save(copyNumbersSegmented, copyNumbersCalled, 
+           bins, file=file.path(pdir, "qdnaseq", "output", "readCounts.Rdata"))
+      print(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.Rdata"))
+    }
+    
     write.table(do.call("rbind", segdat),
                 file=file.path(pdir, "qdnaseq", "output", "swgs_segments.seg"),
                 col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
-    save(copyNumbersSegmented, copyNumbersCalled, 
-         bins, copyNumbersASCN, file=file.path(pdir, "qdnaseq", "output", "readCounts.Rdata"))
+    print(file.path(pdir, "qdnaseq", "output", opt$outdir, "swgs_segments.seg"))
     
-    cat(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.raw.pdf"))
-    cat(file.path(pdir, "qdnaseq", "output", outdir, "readCounts.Rdata"))
   }
 }
 
-printUsage <- function(){
-  cat("Rscript QDNAseq_pipeline.R /path/to/parent_directory outdir_id mode bin_size BAM_004_076 
-       \t args[1] = Absolute path to the parent directory;  Assumes nested directories are 'qdnaseq' and 'input'
-       \t args[2] = Name of the out-directory (i.e. 'CHX_batch1')
-       \t args[3] = Mode to run in: 'stagger' or 'bin'
-       \t args[4] = Bin size to use:  automatically defaults to 1000kb if using 'stagger' mode
-       \t args[5] = [OPTIONAL]: Regex to select for specific BAM files\n\n")
+argChecker <- function(opt, opt_parser){
+  if (is.null(opt$pdir)){
+    print_help(opt_parser)
+    stop("Parent directory must be supplied", call.=FALSE)
+  } else if(is.null(opt$regex)){
+    print("WARNING: No regex was given so all bam files in the input directory will be loaded")
+  } else if(opt$mode == 'stagger' && opt$binsize != 1000){
+    print("WARNING: In stagger mode, all bin-sizes are default to 1000kb bins with 5kb offsets.  Input binsize will be ignored.")
+  }
 }
+
