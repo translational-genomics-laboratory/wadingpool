@@ -152,8 +152,8 @@ if(opt$devel){
 #### QDNAseq Plotting (temporary until heterozygostiy is included)
 ########################################
 dir.create(file.path(opt$pdir, "qdnaseq", "output", opt$outdir), recursive = TRUE)
-cat("Saving image...\n")
-save.image(file.path(opt$pdir, "qdnaseq", "output", opt$outdir, "CHXbatch3.Rdata"))
+# cat("Saving image...\n")
+# save.image(file.path(opt$pdir, "qdnaseq", "output", opt$outdir, "CHXbatch3.Rdata"))
 cat("Plotting...\n")
 plotResults(opt$pdir, type="all")   #raw, smooth, segmented, called
 

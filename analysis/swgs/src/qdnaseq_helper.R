@@ -146,12 +146,12 @@ plotResults <- function(pdir, type, ...){
     } else {
       segdat <- formatSeg(copyNumbersCalled, method='calls')
       save(copyNumbersSegmented, copyNumbersCalled, 
-           bins, file=file.path(pdir, "qdnaseq", "output", "readCounts.Rdata"))
+           bins, file=file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.Rdata"))
       print(file.path(pdir, "qdnaseq", "output", opt$outdir, "readCounts.Rdata"))
     }
     
     write.table(do.call("rbind", segdat),
-                file=file.path(pdir, "qdnaseq", "output", "swgs_segments.seg"),
+                file=file.path(pdir, "qdnaseq", "output", opt$outdir, "swgs_segments.seg"),
                 col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
     print(file.path(pdir, "qdnaseq", "output", opt$outdir, "swgs_segments.seg"))
     
