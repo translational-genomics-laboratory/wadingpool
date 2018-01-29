@@ -29,13 +29,13 @@ To facilitate the pre-processing steps, there are several helper bash-scripts th
 source 0_setupEnvironment.sh
 
 # Processes the fastq > bam alignment;  Any pipeline can replace these parts, as long as the output is a chromosome-subsetted bam file
-sh ${GIT}/pipeline/1_symlinkAndAlignFastq.sh
-sh ${GIT}/pipeline/2_cocleanAllBams.sh
-sh ${GIT}/pipeline/2b_symlinksCocleanedBams.sh
-sh ${GIT}/pipeline/3_subsetByChromosomes.sh
+source ${GIT}/pipeline/1_symlinkAndAlignFastq.sh
+source ${GIT}/pipeline/2_cocleanAllBams.sh
+source ${GIT}/pipeline/2b_symlinkCocleanedBams.sh
+source ${GIT}/pipeline/3_subsetByChromosomes.sh
 
 # Runs all the QC steps to calculate coverage and general metrics
-sh ${GIT}/pipeline/4_getSwgsMetrics.sh
+source ${GIT}/pipeline/4_getSwgsMetrics.sh
 sh ${GIT}/pipeline/4b_summarizeSwgsMetrics.sh
 
 # Runs all the telomere-quantifying steps using TelomereCat

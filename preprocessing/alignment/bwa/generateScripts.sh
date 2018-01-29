@@ -58,6 +58,8 @@ bwa mem -M -t4 \\
 if [ -f ${PDIR}/bam/\${ID}.sam ]; then
     samtools view -bhS ${PDIR}/bam/\${ID}.sam |\\
       samtools sort -@4 - ${PDIR}/bam/\${ID}
+    
+    samtools index ${PDIR}/bam/\${ID}
 else
     echo "Error:  file not present "
 fi

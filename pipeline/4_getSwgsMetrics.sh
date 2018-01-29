@@ -3,11 +3,10 @@ cd ${PDIR}/qc/picard
 mkdir input  output_iSize  output_summary  output_wgs  scripts  sh_scripts
 
 echo "${bold}WadingPool:${normal} Populating the input directory for QC directory...";
-ln -s ${PDIR}/data/bam/*bam input/
-ln -s ${PDIR}/data/bam/*bai input/
-rm input/\*bam input/\*bai
+cp -R ${PDIR}/data/cocleaned_bam/symlinks/* input/
 
 cd sh_scripts
+rm id_list.txt generateScripts.sh
 ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/qc_picard/generateScripts.sh .
 
