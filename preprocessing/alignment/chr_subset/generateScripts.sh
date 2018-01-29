@@ -32,7 +32,7 @@ chr="chr${chrom}"
 PDIR=${PDIR}
 BAMID="${id}.bam"
 
-inDir="\${PDIR}/bam"
+inDir="\${PDIR}/data/bam"
 inBam="\${inDir}/\${BAMID}"
 
 outDir="\${PDIR}/chr_subset/\${chr}"

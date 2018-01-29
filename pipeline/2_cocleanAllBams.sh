@@ -15,6 +15,7 @@ EOF
 mkdir -p ${PDIR}/data/sh_scripts/coclean
 cd ${PDIR}/data/sh_scripts/coclean
 
+rm id_list.txt cocleanBam.sh
 ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/alignment/coclean/cocleanBam.sh .
 
