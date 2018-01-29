@@ -24,7 +24,7 @@ par(mar=c(1,4.1, 2, 2.1))
 cov.col.2 <- c(bait="gray")
 barplot(t(as.matrix(hsmet.df[,c('MEAN_COVERAGE'), drop=FALSE])), 
         ylab="Mean coverage", xaxt='n', las=2, cex.names=0.75,
-        ylim=c(0, 1), col=cov.col.2)
+        ylim=c(0, 0.2), col=cov.col.2)
 
 screen(2)
 par(mar=c(1,4.1, 2, 2.1))

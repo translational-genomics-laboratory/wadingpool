@@ -18,7 +18,7 @@ option_list = list(
               help="Absolute path to the Parent DIRectory which contains the qdnaseq directory", metavar="character"),
   make_option(c("-o", "--outdir"), type="character", default="outdir", 
               help="Name of the out-directory that you want to save your results to [default= %default]", metavar="character"),
-  make_option(c("-m", "--mode"), type="character", default="bin", 
+  make_option(c("-m", "--runmode"), type="character", default="bin", 
               help="Copy-number calling for 'bin' or 'stagger' mode [default= %default]", metavar="character"),
   make_option(c("-b", "--binsize"), type="integer", default=1000, 
               help="Size of the genomic bins [default= %default]", metavar="integer"),
