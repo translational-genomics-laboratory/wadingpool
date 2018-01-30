@@ -11,7 +11,7 @@ for i in $(ls . | grep "wgsMetrics.txt"); do
 done
 
 paste -d "\t" samples.txt  wgsMetrics.txt > tmp.txt
-cat header.txt tmp.txt > allOL.wgsMetrics.txt
+cat header.txt tmp.txt > ../output_summary/allOL.wgsMetrics.txt
 
 rm wgsMetrics.txt
 rm samples.txt

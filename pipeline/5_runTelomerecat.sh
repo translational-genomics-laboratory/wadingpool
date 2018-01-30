@@ -22,6 +22,7 @@ ln -s ${PDIR}/data/bam/*bai input/
 rm input/\*bam input/\*bai
 
 cd sh_scripts
+rm id_list.txt generateScripts.sh
 ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/telomerecat/generateScripts.sh .
 

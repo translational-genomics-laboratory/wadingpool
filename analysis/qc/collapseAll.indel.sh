@@ -11,7 +11,7 @@ for i in $(ls . | grep "isize.txt"); do
 done
 
 paste -d "\t" samples.txt  isize.txt > tmp.txt
-cat header.txt tmp.txt > allOL.isize.txt
+cat header.txt tmp.txt > ../output_summary/allOL.isize.txt
 
 rm isize.txt
 rm samples.txt
