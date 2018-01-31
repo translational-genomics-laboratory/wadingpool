@@ -7,5 +7,5 @@ ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/telomerecat/runTelolen.sh .
 
 echo "${bold}WadingPool:${normal} Running telomerecat...";
-qsub runTelolen.sh ${PDIR}
+qsub runTelolen.sh ${PDIR}/telomerecat
 
