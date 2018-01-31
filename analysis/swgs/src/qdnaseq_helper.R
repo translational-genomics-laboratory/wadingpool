@@ -164,7 +164,7 @@ argChecker <- function(opt, opt_parser){
     stop("Parent directory must be supplied", call.=FALSE)
   } else if(is.null(opt$regex)){
     print("WARNING: No regex was given so all bam files in the input directory will be loaded")
-  } else if(opt$mode == 'stagger' && opt$binsize != 1000){
+  } else if(opt$runmode == 'stagger' && opt$binsize != 1000){
     print("WARNING: In stagger mode, all bin-sizes are default to 1000kb bins with 5kb offsets.  Input binsize will be ignored.")
   }
 }

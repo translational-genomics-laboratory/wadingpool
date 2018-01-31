@@ -2,6 +2,7 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 cd ${PDIR}/telomerecat/sh_scripts
+rm id_list.txt runTelolen.sh
 ln -s ${IDLIST} .
 ln -s ${GIT}/preprocessing/telomerecat/runTelolen.sh .
 

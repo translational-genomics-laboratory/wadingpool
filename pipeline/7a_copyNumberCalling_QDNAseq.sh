@@ -26,10 +26,18 @@ mkdir bin_doc  input  output  sh_scripts
 cp -R ${PDIR}/data/cocleaned_bam/symlinks/* input/
 
 cd sh_scripts
-ln -s ${IDLIST} .
-ln -s ${GIT}/preprocessing/variant_calling/generateScripts.sh .
+ln -s ${GIT}/analysis/swgs/bin/QDNAseq_pipeline.R .
 
-echo "${bold}WadingPool:${normal} Running telomerecat...";
-sh generateScripts.sh ${PDIR} ${DBSNPDIR} ${DBSNPID}
-sh queueJobs.sh
+echo "${bold}WadingPool:${normal} Running QDNAseq copy-number caller...";
+cat << EOF > runQDNAseq.sh
+module load R/3.4.0
+
+Rscript QDNAseq_pipeline.R \\
+--pdir $PDIR \\
+--outdir $RUNID \\
+--runmode 'bin' \\
+--binsize 50 \\
+--regex $REGEX
+EOF
+qsub runQDNAseq.sh
 
