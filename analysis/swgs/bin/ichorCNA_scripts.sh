@@ -19,7 +19,6 @@ else
   readCounter=$2
   ichorPath=$3
 fi
-ichorDIR=${PDIR}'/ichor_cna/input'
 
 rm queueJobs.sh
 for ID in $(cat id_list.txt); do
@@ -30,16 +29,16 @@ for ID in $(cat id_list.txt); do
 
 module load R/3.4.0
 
-if [ ! -f $PDIR/input/$ID.cocleaned.bam.bai ]; then
-  mv $PDIR/input/$ID.cocleaned.bai $PDIR/input/$ID.cocleaned.bam.bai
+if [ ! -f $PDIR/ichor_cna/input/$ID.cocleaned.bam.bai ]; then
+  mv $PDIR/ichor_cna/input/$ID.cocleaned.bai $PDIR/ichor_cna/input/$ID.cocleaned.bam.bai
 fi
-$readCounter --window 1000000 --quality 20 \
---chromosome "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX,chrY" \
-$PDIR/input/$ID.cocleaned.bam | sed "s/chrom=chr/chrom=/" >  $PDIR/output/wig/$ID.wig
+$readCounter --window 1000000 --quality 20 \\
+--chromosome "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX,chrY" \\
+$PDIR/ichor_cna/input/$ID.cocleaned.bam | sed "s/chrom=chr/chrom=/" >  $PDIR/ichor_cna/output/wig/$ID.wig
 
 Rscript $ichorPath/scripts/runIchorCNA.R \\
   --id $ID \\
-  --WIG $PDIR/output/wig/$ID.wig \\
+  --WIG $PDIR/ichor_cna/output/wig/$ID.wig \\
   --ploidy "c(2,3)" \\
   --normal "c(0.2, 0.3, 0.4, 0.5,0.6,0.7,0.8,0.9)" \\
   --maxCN 5 \\
@@ -49,7 +48,7 @@ Rscript $ichorPath/scripts/runIchorCNA.R \\
   --normalPanel $ichorPath"/inst/extdata/HD_ULP_PoN_1Mb_median_normAutosome_mapScoreFiltered_median.rds" \\
   --includeHOMD False --chrs "c(1:22, \\"X\\")" --chrTrain "c(1:22)" \\
   --estimateNormal True --estimatePloidy True --estimateScPrevalence True \\
-  --scStates "c(1,3)" --txnE 0.9999 --txnStrength 10000 --outDir $PDIR/output/
+  --scStates "c(1,3)" --txnE 0.9999 --txnStrength 10000 --outDir $PDIR/ichor_cna/output/
   
 
 EOF

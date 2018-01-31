@@ -31,6 +31,6 @@ ln -s ${GIT}/analysis/swgs/bin/ichorCNA_scripts.sh .
 ln -s ${IDLIST} .
 
 echo "${bold}WadingPool:${normal} Running QDNAseq copy-number caller...";
-sh ichorCNA_scripts ${PDIR} ${READCOPY} ${ICHORPATH}
+sh ichorCNA_scripts.sh ${PDIR} ${READCOPY} ${ICHORPATH}
 sh queueJobs.sh
 
