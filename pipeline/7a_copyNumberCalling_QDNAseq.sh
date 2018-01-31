@@ -30,6 +30,11 @@ ln -s ${GIT}/analysis/swgs/bin/QDNAseq_pipeline.R .
 
 echo "${bold}WadingPool:${normal} Running QDNAseq copy-number caller...";
 cat << EOF > runQDNAseq.sh
+#!/bin/bash
+#
+#$ -cwd
+#$ -S /bin/bash
+#
 module load R/3.4.0
 
 Rscript QDNAseq_pipeline.R \\
