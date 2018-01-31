@@ -10,6 +10,11 @@ Setting up the environment is best saved as a shell file labelled "0_setupEnviro
 ```
 cat << EOF > 0_setupEnvironment.sh
 
+RUNID='Batch5'
+BINSIZE=50
+REGEX='bam$'
+ICHORPATH='/path/to/runIchorCNA.R'
+READCOPY='/path/to/hmmcopy_utils/bin/readCounter'
 GIT="/path/to/git/wadingpool"
 PDIR='/path/to/working_directory'   # Directory you created for analysis
 FASTQDIRS=${PDIR}'/fastq_dirs.txt'  # Pre-existing file containing absolute paths to directory harboring all raw fastq.gz files
@@ -36,16 +41,11 @@ source ${GIT}/pipeline/3_subsetByChromosomes.sh
 
 # Runs all the QC steps to calculate coverage and general metrics
 source ${GIT}/pipeline/4_getSwgsMetrics.sh
-sh ${GIT}/pipeline/4b_summarizeSwgsMetrics.sh
+source ${GIT}/pipeline/4b_summarizeSwgsMetrics.sh
 
 # Runs all the telomere-quantifying steps using TelomereCat
-sh ${GIT}/pipeline/5_runTelomerecat.sh
-sh ${GIT}/pipeline/5b_getTelomereLength.sh
-
-# Runs all the variant calling steps, plus filtering for heterozygous or covered variants
-sh ${GIT}/pipeline/6_variantCalling.sh
-sh ${GIT}/pipeline/6b_selectHetVariants.sh
-sh ${GIT}/pipeline/6c_mergeAllVcf.sh
+source ${GIT}/pipeline/5_runTelomerecat.sh
+source ${GIT}/pipeline/5b_getTelomereLength.sh
 
 # Runs all the variant calling steps, plus filtering for heterozygous or covered variants
 sh ${GIT}/pipeline/6_variantCalling.sh
@@ -53,8 +53,8 @@ sh ${GIT}/pipeline/6b_selectHetVariants.sh
 sh ${GIT}/pipeline/6c_mergeAllVcf.sh
 
 # Runs QDNAseq and ichorCNA copy number calling on the bam files
-sh ${GIT}/pipeline/7a_copyNumberCalling_QDNAseq.sh
-sh ${GIT}/pipeline/7b_copyNumberCalling_ichorCNA.sh
+source ${GIT}/pipeline/7a_copyNumberCalling_QDNAseq.sh
+source ${GIT}/pipeline/7b_copyNumberCalling_ichorCNA.sh
 
 ```
 
