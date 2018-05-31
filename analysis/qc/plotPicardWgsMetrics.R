@@ -7,12 +7,12 @@ outPdf <- args[3]
 
 isize.df <- read.table(isizeFile, sep="\t", header=TRUE, 
                        check.names=FALSE, stringsAsFactors=FALSE)
-rownames(isize.df) <- gsub(".hsMetrics.txt", "", isize.df$SAMPLES)
+rownames(isize.df) <- gsub(".wgsMetrics.txt", "", isize.df$SAMPLES)
 isize.df$SAMPLES <- NULL
 
 hsmet.df <- read.table(metricsFile, sep="\t", header=TRUE, 
                        check.names=FALSE, stringsAsFactors=FALSE)
-rownames(hsmet.df) <- gsub(".hsMetrics.txt", "", hsmet.df$SAMPLES)
+rownames(hsmet.df) <- gsub(".wgsMetrics.txt", "", hsmet.df$SAMPLES)
 hsmet.df$SAMPLES <- NULL
 
 # Plotting Features:
@@ -22,9 +22,10 @@ split.screen(c(3,1))
 screen(1)
 par(mar=c(1,4.1, 2, 2.1))
 cov.col.2 <- c(bait="gray")
+if(max(hsmet.df[,c('MEAN_COVERAGE')]) < 0.01) yrange <- c(0, 0.01) else c(0, max(hsmet.df[,c('MEAN_COVERAGE')]))
 barplot(t(as.matrix(hsmet.df[,c('MEAN_COVERAGE'), drop=FALSE])), 
         ylab="Mean coverage", xaxt='n', las=2, cex.names=0.75,
-        ylim=c(0, 0.2), col=cov.col.2)
+        ylim=yrange, col=cov.col.2)
 
 screen(2)
 par(mar=c(1,4.1, 2, 2.1))

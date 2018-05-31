@@ -54,14 +54,13 @@ createBins2 <- function (bsgenome, binSize, ignoreMitochondria = TRUE,
   bins
 }
 
-
 #### MAIN
 # set the bin size
 binSize <- 1000
 # create bins from the reference genome
 setwd("/mnt/work1/users/pughlab/projects/shallowWGS_benchmark/reference/1000kb_stagger")
 for(offset in seq(0, 250, by=5)){
-  print(paste0("Generating an 1000kb bin with offset of ", offset))
+  print(paste0("Generating an ", binSize, "kb bin with offset of ", offset))
   bins <- createBins2(bsgenome=BSgenome.Hsapiens.UCSC.hg19, binSize=binSize, offset=offset)
   
   map_file='/mnt/work1/users/pughlab/references/mappability/wgEncodeCrgMapabilityAlign50mer.bigWig'
@@ -74,6 +73,10 @@ for(offset in seq(0, 250, by=5)){
     cat(paste0("\n\tSegmentation fault (core dumped) error while using UCSC bigWigAverageOverBed tool for ", offset, "\n"))
     next()
   }
+  # mapbed <- '/mnt/work1/users/home2/quever/map800.bed'
+  # map <- read.table(mapbed, sep = "\t", as.is = TRUE)
+  # map <- map[order(map$V4), ]
+  # mappability <- map$V5 * 100
   bins$mappability <- mappability
   
   encode_bl='/mnt/work1/users/pughlab/references/mappability/wgEncodeDacMapabilityConsensusExcludable.bed'
@@ -111,8 +114,8 @@ for(offset in seq(0, 250, by=5)){
     md5=digest::digest(bins@data),
     sessionInfo=sessionInfo())
   
-  save(bins, file = paste0("1000kb.", offset, ".Rda"))
-  save(bins, file = file.path("annotated_df", paste0("1000kb.", offset, ".Rda")))
+  save(bins, file = paste0(binSize, "kb.", offset, ".Rda"))
+  save(bins, file = file.path("annotated_df", paste0(binSize, "kb.", offset, ".Rda")))
 }
 
 
