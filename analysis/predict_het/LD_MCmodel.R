@@ -152,7 +152,7 @@ if(grepl("model", opt$mode, ignore.case=TRUE)){
                     "fmaf"=founders.maf,
                     "ids"=pos.df$V3)  
   save(mc.models, file=mcmodel.id)
-  write.table(pos.df, file=paste0(opt$id, "_filt.pos"))
+  write.table(pos.df, file=paste0(opt$id, "_filt.pos"), quote=FALSE, sep="\t", col.names=FALSE, row.names=FALSE)
 }
 
 ## Simulations:
