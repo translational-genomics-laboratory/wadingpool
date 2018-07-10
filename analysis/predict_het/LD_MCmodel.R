@@ -264,7 +264,7 @@ if(RUNHELPER){
   iter.range <- 1
 }
 
-err.row <- sapply(iter.range[1:1000], function(each.row) LDMC(each.row))
+err.row <- sapply(iter.range, function(each.row) LDMC(each.row))
 err.row <- unlist(err.row)
 if(any(!is.null(err.row))) sapply(err.row, function(each.row) LDMC(each.row))
   
