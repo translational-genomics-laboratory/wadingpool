@@ -101,6 +101,27 @@ combineSampling <- function(mc.s, states, bin.s, ids){
   all.sim
 }
 
+validate <- function(marker, toggle, env = parent.frame()){
+  each.row <- env$each.row
+  error <- switch(marker,
+                  matsize = (length(env$ld.mat) == 1),
+                  founders = (!all(env$founders %in% env$tags.df$SNP)),
+                  exists = env$exists.flag)
+  
+  message <- switch(marker,
+                    matsize=paste0("LD Matrix is too small... : haploblock ", each.row),
+                    founders=paste0("Founders didn't match the SNPs, likely a failure in plink run: haploblock ", each.row),
+                    exists=paste0("Could not find all files for haploblock", each.row))
+  
+  if(toggle=='status'){
+    return(error)
+  } else if(toggle=='message'){
+    return(message)
+  } else {
+    FALSE
+  }
+}
+
 ###### Main Function
 LDMC <- function(each.row){
   err <- NULL
@@ -143,11 +164,8 @@ LDMC <- function(each.row){
                                                   c(".log", ".maf.log", ".nosex", 
                                                     ".tags.list", "_founders.txt", 
                                                     ".ld.gz", ".maf.ld.gz", ".pos", ".maf.nosex")))))
-    if(exists.flag) {
-      err <- each.row
-      next(paste0("Could not find all files for haploblock", each.row))
-    }
-    
+    if(validate("exists", "status")) {print(validate("exists", "message")); err<-each.row}
+
     ##  Reading in files
     pos.df <- read.table(pos.id, header=FALSE, stringsAsFactors=FALSE)
     founders <- read.table(founders.ids, header=FALSE, stringsAsFactors=FALSE)$V1
@@ -166,46 +184,49 @@ LDMC <- function(each.row){
     #colnames(ld.mat) <- rownames(ld.mat) <- gsub(";.*", "", tags.df$SNP)
     colnames(ld.mat) <- rownames(ld.mat) <- tags.df$SNP
     
-    if(!all(founders %in% tags.df$SNP)) {
-      err <- each.row
-      next(paste0("Founders didn't match the SNPs, likely failure in plink run: haploblock ", each.row))
+    
+    
+    if(validate("matsize", "status")) {print(validate("matsize", "message")); err<-each.row}
+    if(validate("founders", "status")) {print(validate("founders", "message")); err<-each.row}
+    
+    
+    if(is.null(err)){
+      # Calculate step-wise R^2 between founders
+      #founders <- as.character(sapply(founders, function(x) gsub(";.*", "", x)))
+      founders <- as.character(sapply(founders, function(x) x))
+      founders.idx <- sapply(founders, function(x) which(x == colnames(ld.mat)))
+      if(is.list(founders.idx)){
+        rm.idx <- which(sapply(founders.idx, length) == 0)
+        warning(paste0("Warning: could not find the founder SNP, ", paste(founders[rm.idx], collapse='/'), ", in the LD matrix. Removing..."))
+        founders <- founders[rm.idx]
+        founders.idx <- as.integer(founders.idx[-rm.idx])
+      }
+      founders.R2 <- diag(as.matrix(ld.mat[founders.idx[-length(founders.idx)], founders.idx[-1]]))
+      if(any(is.nan(founders.R2))) founders.R2[is.nan(founders.R2)] <- 0
+      
+      # Estimate the founders MAF if given
+      snp_maf <- unique(rbind(as.matrix(maf.df[,c("SNP_A", "MAF_A")]), as.matrix(maf.df[,c("SNP_B", "MAF_B")])))
+      founders.maf <- snp_maf[which(snp_maf[,1] %in% founders[1]), 2]
+      if(length(founders.maf) == 0) founders.maf <- 0.5
+      
+      
+      # Generate non-homolgous markov models for the founder SNPs
+      mcCCRC <- generateNHMC(founders, stateNames, founders.R2)
+      
+      # Calculates the probabilities of founder-SNP to sub-founder SNPs
+      subf.p <- lapply(seq_along(founders.idx[-length(founders.idx)]), generateBinProb, founders.idx, ld.mat)
+      
+      # Extracts all SNP positions in the haplotype block between first and last founder SNP
+      pos.df <- filterPos(pos.df, all.ids=colnames(ld.mat), fidx=founders.idx)
+      
+      mc.models <- list("subfounder"=subf.p,
+                        "founder"=mcCCRC,
+                        "fmaf"=founders.maf,
+                        "ids"=pos.df$V3)  
+      save(mc.models, file=mcmodel.id)
+      write.table(pos.df, file=paste0(opt$id, "_filt.pos"), quote=FALSE, sep="\t", col.names=FALSE, row.names=FALSE)
+      
     }
-    
-    
-    # Calculate step-wise R^2 between founders
-    #founders <- as.character(sapply(founders, function(x) gsub(";.*", "", x)))
-    founders <- as.character(sapply(founders, function(x) x))
-    founders.idx <- sapply(founders, function(x) which(x == colnames(ld.mat)))
-    if(is.list(founders.idx)){
-      rm.idx <- which(sapply(founders.idx, length) == 0)
-      warning(paste0("Warning: could not find the founder SNP, ", paste(founders[rm.idx], collapse='/'), ", in the LD matrix. Removing..."))
-      founders <- founders[rm.idx]
-      founders.idx <- as.integer(founders.idx[-rm.idx])
-    }
-    founders.R2 <- diag(as.matrix(ld.mat[founders.idx[-length(founders.idx)], founders.idx[-1]]))
-    if(any(is.nan(founders.R2))) founders.R2[is.nan(founders.R2)] <- 0
-    
-    # Estimate the founders MAF if given
-    snp_maf <- unique(rbind(as.matrix(maf.df[,c("SNP_A", "MAF_A")]), as.matrix(maf.df[,c("SNP_B", "MAF_B")])))
-    founders.maf <- snp_maf[which(snp_maf[,1] %in% founders[1]), 2]
-    if(length(founders.maf) == 0) founders.maf <- 0.5
-    
-    
-    # Generate non-homolgous markov models for the founder SNPs
-    mcCCRC <- generateNHMC(founders, stateNames, founders.R2)
-    
-    # Calculates the probabilities of founder-SNP to sub-founder SNPs
-    subf.p <- lapply(seq_along(founders.idx[-length(founders.idx)]), generateBinProb, founders.idx, ld.mat)
-    
-    # Extracts all SNP positions in the haplotype block between first and last founder SNP
-    pos.df <- filterPos(pos.df, all.ids=colnames(ld.mat), fidx=founders.idx)
-    
-    mc.models <- list("subfounder"=subf.p,
-                      "founder"=mcCCRC,
-                      "fmaf"=founders.maf,
-                      "ids"=pos.df$V3)  
-    save(mc.models, file=mcmodel.id)
-    write.table(pos.df, file=paste0(opt$id, "_filt.pos"), quote=FALSE, sep="\t", col.names=FALSE, row.names=FALSE)
     
     if(RUNHELPER){
       file.remove(paste0(opt$dir, 
@@ -268,5 +289,3 @@ err.row <- sapply(iter.range, function(each.row) LDMC(each.row))
 err.row <- unlist(err.row)
 if(any(!is.null(err.row))) sapply(err.row, function(each.row) LDMC(each.row))
   
-
-
