@@ -25,7 +25,7 @@ for eachBam in $(cat id_list.txt); do
 #
 #$ -cwd
 #$ -S /bin/bash
-module load telomerecat/3.1.2
+# module load telomerecat/3.1.2
 
 PDIR=${PDIR}
 mkdir \${PDIR}/output/telobam

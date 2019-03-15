@@ -1,4 +1,4 @@
-module load R/3.2.2
+module load R-gsi/3.5.1
 
 pdir=$1
 

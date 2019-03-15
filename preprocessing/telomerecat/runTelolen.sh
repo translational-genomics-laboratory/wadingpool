@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #$ -cwd
-module load telomerecat/3.1.2
+# module load telomerecat/3.1.2
 
 PDIR=$1
 mkdir -p ${PDIR}/output/telolength

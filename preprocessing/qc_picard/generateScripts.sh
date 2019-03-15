@@ -24,21 +24,23 @@ for id in $(cat id_list.txt); do
 #
 #$ -cwd
 
-module load picard/2.4.1
-module load igenome-human/hg19 
+# module load picard/2.4.1
+# module load igenome-human/hg19
+java=/.mounts/labs/PDE/Modules/sw/jvm/jdk1.8.0_91/bin/java
+picard_jar=/.mounts/labs/PDE/Modules/sw/picard/2.12.1/picard.jar
 
 PDIR=${PDIR}
 FILE="$id"
 
 echo "Running CollectWgsMetrics..."
-java -Xmx6g -jar \$picard_dir/picard.jar CollectWgsMetrics \\
+java -Xmx6g -jar \$picard_jar CollectWgsMetrics \\
 I=\$PDIR/input/\$FILE.cocleaned.bam \\
 O=\$PDIR/output_wgs/\$FILE.wgsMetrics.txt \\
 R=\$REF
 
 
 echo "Running insertSize Metrics..."
-java -Xmx6g -jar \$picard_dir/picard.jar CollectInsertSizeMetrics \\
+java -Xmx6g -jar \$picard_jar CollectInsertSizeMetrics \\
 I=\$PDIR/input/\$FILE.cocleaned.bam \\
 O=\$PDIR/output_iSize/\$FILE.isize.txt \\
 H=\$PDIR/output_iSize/\$FILE.histogram.pdf \\
