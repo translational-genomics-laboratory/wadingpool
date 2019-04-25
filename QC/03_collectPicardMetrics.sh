@@ -1,6 +1,3 @@
-
-
-
 for id in `cat ${IDLIST}`; do
   PCFL=$PCQCDIR/${id}
   # mkdir -p $PCDIR
@@ -15,5 +12,5 @@ for id in `cat ${IDLIST}`; do
     H=$PCFL.histogram.pdf \\
     M=0.5" >> ${id}.picard_metrics.sh
     chmod +x ${id}.picard_metrics.sh
+    source ${id}.picard_metrics.sh
 done
-source ${id}.picard_metrics.sh

@@ -5,8 +5,8 @@ Install hmmcopy_utils : https://shahlab.ca/projects/hmmcopy_utils/
 ## QC - sWGS
 
 1. source environment_setup.sh
-2. ./01_alignment.sh
-3. ./02_cocleanBams.sh
-4. ./03_collectPicardMetrics.sh
-5. ./05_telomereLength.sh
-6. ./06_collectAllQC.sh
+2. ./Pre-Processing/01_alignment.sh
+3. ./Pre-Processing/02_cocleanBams.sh
+4. ./QC/03_collectPicardMetrics.sh
+5. ./QC/05_telomereLength.sh
+6. ./QC/06_collectAllQC.sh

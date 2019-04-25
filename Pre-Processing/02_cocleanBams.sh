@@ -1,6 +1,4 @@
-# module load picard/1.90
 module load samtools/1.2
-# module load igenome-human/hg19
 module load bwa/0.7.9a
 module load gatk/3.5.0
 
@@ -72,5 +70,5 @@ for id in `cat $IDLIST`; do
       rm $BAM.dup.realign.recal.grp ;" >> ${id}.coclean.sh
   fi
   chmod +x ${id}.coclean.sh
+  source ${id}.coclean.sh
 done
-source ${id}.coclean.sh
